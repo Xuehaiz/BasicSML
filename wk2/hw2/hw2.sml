@@ -64,13 +64,12 @@ Control.Print.printLength := 20;
 
 fun make_silly_json (i : int) =
   let
-    fun helper j =
-      case j of
-        0 => []
-        | 1 => Object([("n", Num(1.0)), ("b", True)]) :: []
-        | _ => Object([("n", Num(Real.fromInt(j))), ("b", True)]) :: helper(j - 1)
+      fun helper j =
+        case j of
+          0 => []
+          | _ => Object([("n", Num(Real.fromInt(j))), ("b", True)]) :: helper(j - 1)
   in
-    Array(helper(i))
+      Array(helper(i))
   end
 
 
@@ -78,19 +77,81 @@ fun assoc(k, xs) =
   case xs of
     [] => NONE
     | (k1, v1) :: xs' => if k1 = k
-                 then SOME v1
-                 else assoc(k, xs')
+                         then SOME v1
+                         else assoc(k, xs')
 
 
-fun dot(j, f) =
+fun dot(j : json, f : string) =
   case j of
     Object jj => assoc(f, jj)
     | _ => NONE
 
 
+fun one_fields (j: json) =
+  let fun fieldsNames(xs, names)= 
+        case xs of
+          [] => names
+        | (str, js)::xs' => fieldsNames(xs', str::names) 
+  in
+      case j of
+        Object j => fieldsNames(j, [])
+        | _ => []
+  end
 
 
+fun no_repeats (strList : string list) =
+  length (dedup strList) = length strList
 
+
+fun recursive_no_field_repeats (js : json) =
+  let
+      fun arrayTravesal js =
+        case js of
+          [] => true
+          | j::js' => (recursive_no_field_repeats j) andalso (arrayTravesal js')
+
+      fun objectTravesal js =
+        case js of
+          [] => true
+          | (str, j)::js' =>  (recursive_no_field_repeats j) andalso (objectTravesal js')     
+  in
+      case js of
+        Array a => arrayTravesal(a)
+        | Object b => no_repeats (one_fields js) andalso objectTravesal b
+        | _ => true
+  end
+
+exception Fail;
+
+
+fun count_occurrences (li, err) =
+  let 
+      fun count (l, current_string, current_count, countList) = 
+        case l of
+          [] => (current_string, current_count) :: countList
+          | xs::l' => case strcmp(xs, current_string) of
+                         LESS => count (l', xs, 0, (current_string, current_count)::countList)
+                         | EQUAL => count (l', xs, current_count + 1, countList)
+                         | GREATER => raise err
+  in
+      case li of
+        [] => []
+        | xs::li' => count(li', xs, 1, [])
+  end
+
+
+fun string_values_for_field (str, arr) =
+  case arr of
+    [] => []
+    | a::arr' => case dot(a, str) of
+                   SOME (String s) => s::string_values_for_field(str, arr')
+                   | _ => string_values_for_field(str, arr')
+
+
+fun filter_field_value (str1, str2, arr) = 
+  case arr of
+    [] => []
+    | a::arr' =>
 
 (* histogram and historgram_for_field are provided, but they use your 
    count_occurrences and string_values_for_field, so uncomment them 

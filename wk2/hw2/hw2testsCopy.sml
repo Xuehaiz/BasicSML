@@ -24,3 +24,28 @@ val test1 =
 val test2 = assoc ("foo", [("bar",17),("foo",19)]) = SOME 19
 
 val test3 = case dot (json_obj, "ok") of SOME True => true |  _ => false
+
+val test4 = one_fields json_obj = rev ["foo","bar","ok"]
+
+val test5 = not (no_repeats ["foo","bar","foo"])
+
+
+val nest = Array [Object [],
+                  Object[("a",True),
+                         ("b",Object[("foo",True),
+                                     ("foo",True)]),
+                         ("c",True)],
+                  Object []]
+
+val test6 = not (recursive_no_field_repeats nest)
+
+ (* any order is okay, so it's okay to fail this test due to order 
+val test7a = count_occurrences (["a", "a", "b"], Fail "") = [("b",1),("a",2)]
+
+val test7b = count_occurrences (["b", "a", "b"], Fail "") = []
+             handle (Fail "") => true *)
+
+
+val test8 = string_values_for_field ("x", [Object [("a", True),("x", String "foo")],
+                                           Object [("x", String "bar"), ("b", True)]])
+            = ["foo","bar"]
