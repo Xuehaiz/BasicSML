@@ -121,8 +121,6 @@ fun recursive_no_field_repeats (js : json) =
         | _ => true
   end
 
-exception Fail;
-
 
 fun count_occurrences (li, err) =
   let 
@@ -148,18 +146,13 @@ fun string_values_for_field (str, arr) =
                    | _ => string_values_for_field(str, arr')
 
 
-fun filter_field_value (str1, str2, arr) = 
-  case arr of
-    [] => []
-    | a::arr' =>
-
 (* histogram and historgram_for_field are provided, but they use your 
    count_occurrences and string_values_for_field, so uncomment them 
    after doing earlier problems *)
 
 (* histogram_for_field takes a field name f and a list of objects js and 
    returns counts for how often a string is the contents of f in js. *)
-(*
+
 exception SortIsBroken
 
 fun histogram (xs : string list) : (string * int) list =
@@ -177,19 +170,45 @@ fun histogram (xs : string list) : (string * int) list =
 
 fun histogram_for_field (f,js) =
   histogram (string_values_for_field (f, js))
-*)
+
 
 (**** PUT PROBLEMS 9-11 HERE ****)
 
 ;Control.Print.printDepth := 3;
 Control.Print.printLength := 3;
 
+fun filter_field_value (str1, str2, arr) = 
+  case arr of
+    [] => []
+    | a::arr' => case dot(a, str1) of
+                   SOME (String s2) => if str2 = s2
+                                       then a::filter_field_value(str1, str2, arr')
+                                       else filter_field_value(str1, str2, arr')
+                   | _ => filter_field_value(str1, str2, arr')
+
+
+val large_event_clearance_description_histogram = histogram_for_field("event_clearance_description", [small_incident_reports]);
+
+val large_hundred_block_location_histogram = histogram_for_field("hundred_block_location", [small_incident_reports]);
+
 (**** PUT PROBLEMS 12-15 HERE ****)
 
 ;Control.Print.printDepth := 20;
 Control.Print.printLength := 20;
 
+val forty_third_and_the_ave_reports = filter_field_value("hundred_block_location", "43XX BLOCK OF UNIVERSITY WAY NE", [small_incident_reports]);
+
+val forty_third_and_the_ave_event_clearance_description_histogram = histogram_for_field("event_clearance_description", forty_third_and_the_ave_reports);
+
+val nineteenth_and_forty_fifth_reports = filter_field_value("hundred_block_location", "45XX BLOCK OF 19TH AVE NE", [small_incident_reports]);
+
+val nineteenth_and_forty_fifth_event_clearance_description_histogram = histogram_for_field("event_clearance_description", nineteenth_and_forty_fifth_reports);
+
+
 (**** PUT PROBLEMS 16-19 HERE ****)
+
+fun concat_with(sep : string, strlist : string list) =
+  if strlist 
 
 
 
