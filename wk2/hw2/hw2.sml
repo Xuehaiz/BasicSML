@@ -207,8 +207,50 @@ val nineteenth_and_forty_fifth_event_clearance_description_histogram = histogram
 
 (**** PUT PROBLEMS 16-19 HERE ****)
 
-fun concat_with(sep : string, strlist : string list) =
-  if strlist 
+fun concat_with(sep : string, l : string list) =
+  case l of
+    [] => ""
+    | [str] => str^concat_with(sep, [])
+    | x::xs => x^sep^concat_with(sep, xs)
+
+
+fun quote_string (str : string) =
+  "\""^str^"\""
+
+
+fun real_to_string_for_json (float : real) =
+  if real_is_negative(float)
+  then "-"^real_to_string(real_abs(float))
+  else real_to_string(float)
+
+
+fun json_to_string (js : json) =
+  case js of
+    Num n => real_to_string(n)
+    | String s => s
+    | False => "false"
+    | True => "true"
+    | Null => "null"
+    | Array arr => 
+      let fun parse_arr (arr) =
+            case arr of
+              [] => []
+              | x::xs => json_to_string(x)::parse_arr(xs)
+      in
+        "[" ^ concat_with(", ", parse_arr(arr)) ^ "]"
+      end
+    | Object obj =>
+      let fun parse_obj (obj) =
+            case obj of
+              [] => []
+              | (str, j)::obj' => quote_string(str)^":"^json_to_string(j)::parse_obj(obj')
+      in
+        "{"^ concat_with(", ", parse_obj(obj)) ^ "}"
+      end
+
+
+
+
 
 
 
