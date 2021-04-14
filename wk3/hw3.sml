@@ -30,7 +30,48 @@ val longest_lowercase = (longest_string1 o only_lowercase);
 longest_lowercase ["HELLO", "WORLD", "hello", "world", "Beautiful", "beautiful", "caseoftie"];
 
 (* 6 *)
-val caps_no_X_string = (String.map Char.toUpper) o List.filter(fn c => Char.toUpper(c) <> #"X") o String.explode
+val caps_no_X_string = (String.map Char.toUpper) o String.implode o List.filter(fn c => Char.toUpper(c) <> #"X") o String.explode;
+
+caps_no_X_string "aBxXXxDdx";
+
+(* 7 *)
+exception NoAnswer;
+
+fun first_answer f li =
+	case li of
+		[] => raise NoAnswer
+	|	x::li' => case f x of
+			NONE => first_answer f li'
+		| 	SOME p => p
+
+(* 8 *)
+fun all_answers f li = 
+	let 
+		fun helper(li, acc) = 
+			case li of 
+				[] => SOME acc
+			|	x::li' => case f x of
+					NONE => NONE
+				|	SOME p => helper(li', p @ acc)
+	in 
+		helper(li, [])
+	end
+
+
+(* given *)
+datatype pattern 
+	= WildcardP
+	| VariableP of string
+	| UnitP
+	| ConstantP of int
+	| ConstructorP of string * pattern
+	| TupleP of pattern list
+
+datatype valu 
+	= Constant of int
+	| Unit
+	| Constructor of string * valu
+	| Tuple of valu list
 
 
 
