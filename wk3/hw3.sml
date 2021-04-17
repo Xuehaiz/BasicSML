@@ -74,6 +74,19 @@ datatype valu
 	| Tuple of valu list
 
 
+fun g f1 f2 p =
+    let
+        val r = g f1 f2
+    in
+        case p of
+            WildcardP		  => f1 ()
+          | VariableP x 	  => f2 x
+          | ConstructorP(_,p) => r p
+          | TupleP ps         => List.foldl (fn (p,i) => (r p) + i) 0 ps
+          | _                 => 0
+	end
+
+
 
 
 
