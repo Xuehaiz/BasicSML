@@ -57,7 +57,7 @@ fun all_answers f li =
 		helper(li, [])
 	end
 
-
+(* 9 *)
 (* given *)
 datatype pattern 
 	= WildcardP
@@ -85,6 +85,15 @@ fun g f1 f2 p =
           | TupleP ps         => List.foldl (fn (p,i) => (r p) + i) 0 ps
           | _                 => 0
 	end
+
+(*
+g: count number of patterns matched
+wildcard 			-> run f1 with nothing (unit)
+variable 			-> run f2 with x
+constructor(_, p) 	-> run g again with p, discard _
+tuple 				-> pass everything to g, return amount of times folded
+_					-> 0
+*)
 
 
 
