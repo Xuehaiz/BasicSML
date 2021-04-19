@@ -160,7 +160,7 @@ fun histogram (xs : string list) : (string * int) list =
     fun compare_strings (s1 : string, s2 : string) : bool = s1 > s2
 
     val sorted_xs = ListMergeSort.sort compare_strings xs
-    val counts = count_occurrences (sorted_xs,SortIsBroken)
+    val counts = count_occurrences (sorted_xs, SortIsBroken)
 
     fun compare_counts ((s1 : string, n1 : int), (s2 : string, n2 : int)) : bool =
       n1 < n2 orelse (n1 = n2 andalso s1 < s2)
