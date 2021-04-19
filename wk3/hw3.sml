@@ -99,6 +99,70 @@ val count_wildcards = g (fn _ => 1) (fn _ => 0);
 
 val count_wild_and_variable_lengths = g (fn _ => 1) (fn n => String.size(n));
 
+val count_a_var (str, p) =
+	g (fn _ => 0) (fn n => if n = str then 1 else 0) p;
+
+
+(* 10 *)
+fun check_pat p =
+	let fun get_vals p =
+			case p if
+				VariableP s => [s]
+			|	ConstructorP(_,p1) => get_vals p1
+			|	TupleP ps => List.foldl (fn (p, vars) => get_vals p @ vars) [] ps
+			| 	_ => []
+		fun dedup xs = ListMergeSort.uniqueSort String.compare xs
+		fun unique xs = (length xs) = length(dedup(xs))
+	in
+		(unique o get_vals) p
+	end;
+
+
+(* 11 *)
+fun match (v, p) = 
+	case (v, p) of 
+		(_, WildcardP wc) => SOME []
+	|	(_, VariableP s) => SOME [(s, v)]
+	|	(Unit, UnitP) => SOME []
+	|	(Constant i, ConstantP i') => if i = i' then SOME [] else NONE
+	|	(Constructor (s1, v), ConstantP (s2, p)) => if s1 = s2 then match (v, p) else NONE
+	|	(Tuple vs, TupleP ps) => if length(vs) = length(ps) 
+								 then all_answers match(ListPair.zip(vs, ps))
+								 else NONE
+	|	_ => NONE
+
+
+(* 12 *)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
