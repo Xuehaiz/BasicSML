@@ -41,8 +41,8 @@ fun first_answer f li =
 	case li of
 		[] => raise NoAnswer
 	|	x::li' => case f x of
-			NONE => first_answer f li'
-		| 	SOME p => p
+					NONE => first_answer f li'
+				| 	SOME p => p
 
 (* 8 *)
 fun all_answers f li = 
@@ -133,6 +133,9 @@ fun match (v, p) =
 
 
 (* 12 *)
+fun first_match (v, ps) =
+	SOME (first_answer(fn pat => match(v, pat)) ps)
+	handle NoAnswer => NONE
 
 
 
