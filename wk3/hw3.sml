@@ -1,4 +1,4 @@
-(* HW3 Xuehai Zhou*)
+(* HW3 Xuehai Zhou *)
 
 (* 1 *)
 fun only_lowercase (l : string list) = List.filter (fn s => Char.isLower(String.sub(s, 0))) l;

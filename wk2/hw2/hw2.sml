@@ -127,14 +127,14 @@ fun count_occurrences (li, err) =
       fun count (l, current_string, current_count, countList) = 
         case l of
           [] => (current_string, current_count) :: countList
-          | xs::l' => case strcmp(xs, current_string) of
-                         LESS => count (l', xs, 0, (current_string, current_count)::countList)
-                         | EQUAL => count (l', xs, current_count + 1, countList)
+          | x::l' => case strcmp(x, current_string) of
+                         LESS => count (l', x, 0, (current_string, current_count)::countList)
+                         | EQUAL => count (l', x, current_count + 1, countList)
                          | GREATER => raise err
   in
       case li of
         [] => []
-        | xs::li' => count(li', xs, 1, [])
+        | x::li' => count(li', x, 1, [])
   end
 
 
