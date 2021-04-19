@@ -95,6 +95,10 @@ tuple 				-> pass everything to g, return amount of times folded
 _					-> 0
 *)
 
+val count_wildcards = g (fn _ => 1) (fn _ => 0);
+
+val count_wild_and_variable_lengths = g (fn _ => 1) (fn n => String.size(n));
+
 
 
 
