@@ -29,6 +29,8 @@ val test1 =  "let x = 1 in \
            \ end \
        \  end  " ;
 
+val test1dyn = interp (emptyenv, parsestr test1);
+val test1stat = interp_static (emptyenv, parsestr test1);
 (* *********************************************************************** *)
 
 (*
@@ -54,7 +56,8 @@ val test2 = "let x = 1 \
 \   end \
 \ end ";
 
-
+val test2dyn = interp (emptyenv, parsestr test2);
+val test2stat = interp_static (emptyenv, parsestr test2);
 
 (* *********************************************************************** *)
 
@@ -92,6 +95,9 @@ val test3 =  "let x = 1 \
 \       end \
 \   end";
 
+(* val test3dyn = interp (emptyenv, parsestr test3); *)
+val test3stat = interp_static (emptyenv, parsestr test3);
+
 (* *********************************************************************** *)
 (*
 fun f g =
@@ -116,6 +122,8 @@ val test4 = "let f = fn g => let x = 3 in g 2 end \
 \              end";
 
 
+val test4dyn = interp (emptyenv, parsestr test4);
+val test4stat = interp_static (emptyenv, parsestr test4);
 
 (* *********************************************************************** *)
 
@@ -165,7 +173,8 @@ val test5 = "let f1 = fn y=> let x = + y 1 in fn z => let t1= + x y \
 \                 end \
 \             end";
 
-
+val test5dyn = interp (emptyenv, parsestr test5);
+val test5stat = interp_static (emptyenv, parsestr test5);
 
 val test6 = "let f2 = fn y=> let q = + y 1 in fn z => let t1= + q y \
 \                                                      in + t1  z \
@@ -182,8 +191,18 @@ val test6 = "let f2 = fn y=> let q = + y 1 in fn z => let t1= + q y \
 \                end \
 \             end";
 
+val test6dyn = interp (emptyenv, parsestr test6);
+val test6stat = interp_static (emptyenv, parsestr test6);
+
 
 (* f3 and f4 are always the same, no matter what argument is passed in 
+
+Static:   a3 is 19
+Dynamic:  a3 is 5
+
+Static:   a4 is 19
+Dynamic:  a4 is 19
+*)
 
 fun f3 g =
     let
@@ -196,15 +215,10 @@ fun f4 g = g 2;
 
 
 val x = 17;
-val a3 = f3 (fn y => x + y) ; (* you notice a difference *)
-val a4 = f4 (fn y => x + y) ;(* there is no difference *)
+val a3 = f3 (fn y => x + y) ;  (* you notice a difference *)
+val a4 = f4 (fn y => x + y) ;  (* there is no difference *)
 
-Static:   a3 is 19
-Dynamic:  a3 is 5
 
-Static:   a4 is 19
-Dynamic:  a4 is 19
-*)
 
 val test7 = "let f3 = fn g => let x = 3 in g 2 end \
 \             in let x = 17   \ 
@@ -217,4 +231,10 @@ val test8 = "let f4 = fn g => g 2  \
 \                in f4 (fn y => + x y) \
 \                end \
 \            end";
+
+val test7dyn = interp (emptyenv, parsestr test7);
+val test7stat = interp_static (emptyenv, parsestr test7);
+
+val test8dyn = interp (emptyenv, parsestr test8);
+val test8stat = interp_static (emptyenv, parsestr test8);
 
