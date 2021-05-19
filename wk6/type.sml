@@ -19,6 +19,8 @@ exception UnboundID
 
 datatype env = Env of (string -> typ)
 
+fun look_up (Env e) x = e x 
+
 fun emptyenvFun (x : string) : typ = raise UnboundID
 val emptyenv = Env emptyenvFun
 

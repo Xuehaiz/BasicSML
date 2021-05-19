@@ -19,16 +19,25 @@ exception Unimplemented
 exception TypeError
 
 (* typeOf : env -> term -> typ *)
-fun typeOf  (Env env)(AST_ID s)     =  env s
+fun typeOf env (AST_ID s)          = look_up env s
   | typeOf env (AST_NUM n)         = INT
   | typeOf env (AST_BOOL b)        = BOOL
-  | typeOf env (AST_FUN(i,t,e)) = raise Unimplemented
-  | typeOf env AST_SUCC            = raise Unimplemented
-  | typeOf env AST_PRED            = raise Unimplemented
-  | typeOf env AST_ISZERO          = raise Unimplemented
-  | typeOf env (AST_IF (e1,e2,e3)) = raise Unimplemented
-  | typeOf env (AST_APP (e1,e2))   = raise Unimplemented
-  | typeOf env (AST_LET (x,e1,e2)) = raise Unimplemented
+  | typeOf env (AST_FUN(i,t,e)) = ARROW(t, typeOf (Env (update env i t)) e)
+  | typeOf env AST_SUCC            = ARROW(INT, INT)
+  | typeOf env AST_PRED            = ARROW(INT, INT)
+  | typeOf env AST_ISZERO          = ARROW(INT, BOOL)
+  | typeOf env (AST_IF (e1,e2,e3)) = (case (typeOf env e1, typeOf env e2, typeOf env e3) of
+                                        (BOOL, t1, t2) => if t1 = t2 then t1 else raise TypeError
+                                      |  _             => raise TypeError ) 
+  | typeOf env (AST_APP (e1,e2))   = (case (typeOf env e1, typeOf env e2) of
+                                        (ARROW(t1, t2), t1') => if t1 = t1' then t2 else raise TypeError 
+                                      |  _                   => raise TypeError) 
+  | typeOf env (AST_LET (x,e1,e2)) = let
+                                        val t1 = typeOf env e1
+                                        val env' = Env (update env x t1)
+                                     in
+                                        typeOf env' e2
+                                     end
 
 
 
