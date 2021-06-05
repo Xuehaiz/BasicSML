@@ -15,11 +15,22 @@ fun typ2str (VAR a)		= "'" ^ a
  *  and code that produces the updated environment E[x : t].
  *)
 
+(*
+(a) int
+	INT
+
+(b) int -> bool
+	ARROW(INT, BOOL)
+
+(c) ('a -> 'b) -> ('a -> 'b)
+	ARROW(ARROW(VAR "a", VAR "b"), ARROW(VAR "a", VAR "b"))
+*)
+
 exception UnboundID
 
 datatype env = Env of (string -> typ)
 
-fun look_up (Env e) x = e x 
+fun look_up (Env env) x = env x 
 
 fun emptyenvFun (x : string) : typ = raise UnboundID
 val emptyenv = Env emptyenvFun

@@ -46,6 +46,19 @@ Some sample functions translated into abstract syntax for you to test
 your typechecker on:
 *)
 
+fun typeOf (env, AST_ID x) = look_up env x
+|   typeOf (_, AST_NUM _) = INT
+|   typeOf (_, AST_BOOL _) = BOOL
+|   typeOf (_, AST_SUCC) = ARROW(INT, INT)
+|   typeOf (_, AST_PRED) = ARROW(INT, INT)
+|   typeOf (_, AST_ISZERO) = ARROW(INT, BOOL)
+|   typeOf (env, AST_IF(e1, e2, e3)) = (case (typeOf(env, e1), typeOf(env, e2), typeOf(env, e3)) of 
+                                          (BOOL, t, t') => if (t = t') then t else raise TypeError
+                                        | _ => raise TypeError)
+|   typeOf (env, AST_APP(e1, e2)) = (case (typeOf(env, e1), typeOf(env, e2)) of
+                                        (ARROW(t1, t2), t1') => if (t1 = t1') then t2 else raise TypeError
+                                    |   _ => raise TypeError) 
+
 (* fn (f : a -> a) => fn (x : a) => f (f x) *)
 val test1 = AST_FUN("f", ARROW(VAR "a", VAR "a"),
                 AST_FUN("x", VAR "a",
@@ -62,7 +75,7 @@ val test2 = AST_FUN("f", ARROW(VAR "b", VAR "c"),
                             AST_APP(AST_ID "g", AST_ID "x")))));
 
 val y = fn (f : 'b -> 'c) => fn (g : 'a -> 'b) => fn (x : 'a) => f (g x)
-val x = typ2str (typeOf emptyenv  test2);
+val x = typ2str (typeOf emptyenv test2);
 
 (* (* fn (b : bool) => if b then 1 else 0 *) *)
 val test3 = AST_FUN("b", BOOL,
