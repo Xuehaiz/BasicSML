@@ -28,7 +28,7 @@ fun typeOf env (AST_ID s)          = look_up env s
   | typeOf env AST_ISZERO          = ARROW(INT, BOOL)
   | typeOf env (AST_IF (e1,e2,e3)) = (case (typeOf env e1, typeOf env e2, typeOf env e3) of
                                         (BOOL, t1, t2) => if t1 = t2 then t1 else raise TypeError
-                                      |  _             => raise TypeError ) 
+                                      |  _             => raise TypeError) 
   | typeOf env (AST_APP (e1,e2))   = (case (typeOf env e1, typeOf env e2) of
                                         (ARROW(t1, t2), t1') => if t1 = t1' then t2 else raise TypeError 
                                       |  _                   => raise TypeError) 
@@ -45,20 +45,6 @@ Some sample functions translated into abstract syntax for you to test
 your typechecker on:
 *)
 
-fun typeOf (env, AST_ID x) = look_up env x
-|   typeOf (_, AST_NUM _) = INT
-|   typeOf (_, AST_BOOL _) = BOOL
-|   typeOf (_, AST_SUCC) = ARROW(INT, INT)
-|   typeOf (_, AST_PRED) = ARROW(INT, INT)
-|   typeOf (_, AST_ISZERO) = ARROW(INT, BOOL)
-|   typeOf (env, AST_IF(e1, e2, e3)) = (case (typeOf(env, e1), typeOf(env, e2), typeOf(env, e3)) of 
-                                          (BOOL, t, t') => if (t = t') then t else raise TypeError
-                                        | _ => raise TypeError)
-|   typeOf (env, AST_APP(e1, e2)) = (case (typeOf(env, e1), typeOf(env, e2)) of
-                                        (ARROW(t1, t2), t1') => if (t1 = t1') then t2 else raise TypeError
-                                    |   _ => raise TypeError) 
-
-
 fun typeOf (AST_ID x, env) = look_up env x
   | typeOf (AST_NUM _, _) = INT
   | typeOf (AST_BOOL _, _) = BOOL
@@ -71,7 +57,7 @@ fun typeOf (AST_ID x, env) = look_up env x
   | typeOf (AST_FUN(x, t1, e), env) = ARROW(t1, typeOf(e, Env (update env x t1)))
   | typeOf (AST_APP(e1, e2), env) = (case (typeOf(e1, env), typeOf(e2, env)) of
         (ARROW(t1, t2), t1') => if t1 = t1' then t2 else raise TypeError
-      | _                         => raise TypeError)
+      | _                    => raise TypeError)
   | typeOf (AST_LET(x, e1, e2), env) = let val t1 = typeOf(e1, env)
                                        in
                                            typeOf(e2, Env (update env x t1))
