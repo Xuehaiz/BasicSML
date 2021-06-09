@@ -8,7 +8,7 @@ datatype result = RES_NUM of int | ERROR
 
 fun interp (NUM n) = n
   |	interp (DIVIDE(t1, t2)) = (case (interp t1, interp t2) of
-  								 (n1, 0) => raise DivZero
+  								   (n1, 0)  => raise DivZero
   							  |	 (n1, n2) => n1 div n2)
 
 val x = interp (DIVIDE (NUM 3, NUM 0)) handle DivZero => 0
@@ -18,12 +18,12 @@ val x = interp (DIVIDE (NUM 3, NUM 0)) handle DivZero => 0
 
 fun interp (NUM n) = RES_NUM n
   |	interp (DIVIDE(t1, t2)) = (case (interp t1, interp t2) of
-  								 (RES_NUM n1, RES_NUM 0) => ERROR
+  								   (RES_NUM n1, RES_NUM 0)  => ERROR
   							  |	 (RES_NUM n1, RES_NUM n2) => RES_NUM (n1 div n2)
-  							  | _ => ERROR)
+  							  |  _ => ERROR)
 
 val x' = case interp (DIVIDE (NUM 3, NUM 0)) of
-	RES_NUM n => n
+	  RES_NUM n => n
   |	ERROR => 0
 
 
@@ -33,6 +33,8 @@ fun interp_state (NUM x) = x
 |   interp_state (DIVIDE (t1, t2)) = let val _ = (count := !count + 1)
                                      in (interp_state t1) div (interp_state t2)
                                      end
+
+val div_state = interp_state (DIVIDE (DIVIDE (NUM 3, NUM 1), NUM 1));   
 
 (* interp_state : term -> int * int *)
 
